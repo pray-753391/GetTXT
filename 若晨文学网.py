@@ -79,17 +79,27 @@ def GetTxt1(url):
         a = a.replace(char, '')
     return  a
 index = 0
+
+
+
 for url2 in NewList:
-    #这个是页数，应该最多就是5页了，根据情况而定，反正多余的处理后也是空值
-    for url3 in range(1,6):
+    #这个是页数，多的返回temp为''值 根据此判断
+    for url3 in range(1,100):
         url3 = str(url3)
         url3 = '_'+url3
         url = url1 + url2 + url3 + url4
         temp = GetTxt1(url)
-        temp = temp+'\n'
-        Nerstr = Nerstr+temp
+        if temp == '':
+            break
+        else:
+            temp = temp + '\n'
+            Nerstr = Nerstr + temp
     index = index+1
     print('第'+str(index)+'章已经加好了')
+
+char = '《无法标记（星际）》无错章节将持续在若晨文学小说网更新,站内无任何广告,还请大家收藏和推荐若晨文学！'
+if char in Nerstr:
+    Nerstr = Nerstr.replace(char,'')
 
 out = open('C:\\Users\\yjr\\Desktop\\test.txt','w',encoding='utf-8')
 out.write(Nerstr)
