@@ -7,6 +7,7 @@ Nerstr = ''
 def GetCatalog(url):
     strhtml = requests.post(url)
     a = strhtml.text
+
     # 删除无关内容
     split = '<ul class="read">'
     split = a[0:a.rfind(split, 1)]
@@ -30,29 +31,26 @@ def GetCatalog(url):
         start = a.find('"><')
         end = a.find('i>')
         temp = a[start:end + 2]
-        a = a.replace(temp, '')
+        a = a.replace(temp, ',')
+
     # 删除换行的和Tab
-    a = a.split('\n')
-    start = a.index('')
-    end = a.index('\t\t\t')
-    a = a[start + 1:end]
+    a = a.split(',')
 
     for i in a:
-        i = i.replace('\t\t\t\t', '')
-        # 用NewList提取
+        if i=='':
+            continue
         NewList.append(i)
-url1 = 'https://m.ruochenwx.com/85319/p'
+
+url1 = 'https://m.ruochenwx.com/227832/p'
 url3 = '.html'
 #这个根据目录具体有几页来,end为总页数+1
-for url2 in range(1,7):
+for url2 in range(1,6):
     url2 = str(url2)
     url = url1+url2+url3
     GetCatalog(url)
 
-
-
 #进行到这里，NewList内已经存储的是每章的书号名
-url1 = 'https://m.ruochenwx.com/85319/'
+url1 = 'https://m.ruochenwx.com/227832/'
 url4 = '.html'
 #页面文字的截取
 def GetTxt1(url):
@@ -62,7 +60,7 @@ def GetTxt1(url):
     split = a[0:a.rfind(split, 1)]
     a = a.split(split)
     a = a[1]
-    split = '喜欢无法标记（星际）请大家收藏'
+    split = '喜欢与年下的恋爱法则请大家收藏'
     a = a.split(split, 1)[0]
 
     char = '</p><p>-->>本章未完，点击下一页继续阅读</p><p>'
@@ -73,15 +71,12 @@ def GetTxt1(url):
         a = a.replace(char, '')
     char = '</p>'
     if char in a:
-        a = a.replace(char, '')
+        a = a.replace(char, '\n')
     char = '<div class="content">'
     if char in a:
         a = a.replace(char, '')
     return  a
-index = 0
-
-
-
+index = 1
 for url2 in NewList:
     #这个是页数，多的返回temp为''值 根据此判断
     for url3 in range(1,100):
@@ -89,15 +84,21 @@ for url2 in NewList:
         url3 = '_'+url3
         url = url1 + url2 + url3 + url4
         temp = GetTxt1(url)
-        if temp == '':
+        if temp == '\n':
             break
         else:
-            temp = temp + '\n'
             Nerstr = Nerstr + temp
-    index = index+1
-    print('第'+str(index)+'章已经加好了')
+    Nerstr = Nerstr + '\n' + '第' + str(index) + '章' + '\n'
 
-char = '《无法标记（星际）》无错章节将持续在若晨文学小说网更新,站内无任何广告,还请大家收藏和推荐若晨文学！'
+    print('第'+str(index)+'章已经加好了')
+    index = index+1
+
+
+
+char = '《与年下的恋爱法则》无错章节将持续在若晨文学小说网更新,站内无任何广告,还请大家收藏和推荐若晨文学！'
+if char in Nerstr:
+    Nerstr = Nerstr.replace(char,'')
+char = '本章未完，请点击下一页继续阅读，后面更精彩！'
 if char in Nerstr:
     Nerstr = Nerstr.replace(char,'')
 
